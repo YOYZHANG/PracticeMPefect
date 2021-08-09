@@ -1,0 +1,52 @@
+1. POP
+
+```ts
+type Pop<T extends any[]> = T extends [...arg: infer P, last: any] ? P : never;
+```
+https://github.com/type-challenges/type-challenges/blob/master/questions/16-medium-pop/README.md
+
+2. Promise.all
+
+```ts
+
+declare function PromiseAll<T extends any[]>(values: readonly[...T]):
+  Promise<{[key in keyof T]: T[key] extends Promise<infer I> ? I : T[key]}>
+```
+
+3. lookup
+```ts
+type LookUp<U, T extends string> = 
+  U extends {'type': T} ? U : never;
+
+```
+
+4. trimLeft
+```ts
+type TrimLeft<S extends string> = S extends `${' ' | '\n' | '\t'}${infer R}`? TrimLeft<R> : S;
+```
+
+5. trim
+```ts
+type Trim<S extends string> = S extends `${' ' | '\n' | '\t'}${infer P}` 
+  ? Trim<P>
+  : S extends `${infer P}${' ' | '\n' | '\t'}`
+    ? Trim<P>
+    : S;
+
+
+```
+6. capitalize
+
+```ts
+type Capitalize<S extends string> = S extends `${infer P}${infer rest}` ? `${Uppercase<P>}${rest}` : S;
+```
+
+7. replace
+```ts
+type Replace<S extends string, From extends string, To extends string> = From extends '' ? S : S extends `${infer A}${From}${infer B}` ? `${A}${To}${B}` : S
+```
+
+8. replaceAll
+```ts
+type ReplaceAll<S extends string, From extends string, To extends string> = From extends '' ? S : S extends `${infer p}${From}${infer q}` ? `${p}${To}${ReplaceAll<q, From, To>}` : S;
+```
