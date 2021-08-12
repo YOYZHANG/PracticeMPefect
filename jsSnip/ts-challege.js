@@ -50,3 +50,5 @@ type Replace<S extends string, From extends string, To extends string> = From ex
 ```ts
 type ReplaceAll<S extends string, From extends string, To extends string> = From extends '' ? S : S extends `${infer p}${From}${infer q}` ? `${p}${To}${ReplaceAll<q, From, To>}` : S;
 ```
+
+9. xxxx
