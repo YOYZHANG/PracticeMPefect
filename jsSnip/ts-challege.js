@@ -57,4 +57,9 @@ type LengthOfString<S extends string, R extends any[] = []>
     ? LengthOfString<Rest, [First, ...R]>
     : R["Length"]
     
-10. xxx
+10. Append to object
+```ts
+type AppendToObject<T extends object, U extends string, V> = {
+  [K in keyof T | U]: K extends keyof T ? T[K] : V;
+};
+```
