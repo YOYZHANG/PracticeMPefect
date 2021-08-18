@@ -72,3 +72,11 @@ type Absolute<T extends number | string | bigint> = T extends `${infer P}${infer
     : T
   : Absolute<`${T}`>
 ```
+
+  12. stringToUnion
+  
+  ```ts
+  type StringToUnion<T extends string, Union = never> = T extends `${infer P}${infer U}`
+  ? StringToUnion<U, Union | P>
+  : Union
+  ```
