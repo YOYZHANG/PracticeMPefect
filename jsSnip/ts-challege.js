@@ -63,3 +63,12 @@ type AppendToObject<T extends object, U extends string, V> = {
   [K in keyof T | U]: K extends keyof T ? T[K] : V;
 };
 ```
+
+11.  absolute
+```ts
+type Absolute<T extends number | string | bigint> = T extends `${infer P}${infer Rest}`
+  ? P extends '-'
+    ? Rest
+    : T
+  : Absolute<`${T}`>
+```
