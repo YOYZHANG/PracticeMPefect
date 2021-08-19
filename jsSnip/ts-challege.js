@@ -81,4 +81,8 @@ type Absolute<T extends number | string | bigint> = T extends `${infer P}${infer
   : Union
   ```
 
-13. 
+13. merge
+
+```ts
+type Merge<F, S> = {[K in keyof F]: K extends keyof S ? S[K] : F[K]}
+```
