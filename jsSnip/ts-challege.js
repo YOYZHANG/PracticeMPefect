@@ -86,3 +86,12 @@ type Absolute<T extends number | string | bigint> = T extends `${infer P}${infer
 ```ts
 type Merge<F, S> = {[K in keyof F]: K extends keyof S ? S[K] : F[K]}
 ```
+
+14. CAMELCASE
+```ts
+type CamelCase<S> = S extends `${infer P}-${infer Q}${infer REST}`
+  ? Q extends Uppercase<Q>
+    ? `${P}-${CamelCase<`${Q}${REST}`>}` 
+    :`${P}${Uppercase<Q>}${CamelCase<REST>}`
+  : S
+```
