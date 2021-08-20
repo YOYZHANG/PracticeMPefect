@@ -95,3 +95,19 @@ type CamelCase<S> = S extends `${infer P}-${infer Q}${infer REST}`
     :`${P}${Uppercase<Q>}${CamelCase<REST>}`
   : S
 ```
+
+15. 如何声明类的ts
+```ts
+type ModuleConstructor = new () => unknown;
+
+type ModuleConstructor = {new(): unknown};
+
+class A {
+  // constructor() {}
+}
+
+var haha: ModuleConstructor = A;
+type cases = [
+  Expect<Equal<ModuleConstructor, typeof haha>>
+]
+```
