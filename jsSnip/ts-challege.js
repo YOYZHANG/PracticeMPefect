@@ -111,4 +111,13 @@ type cases = [
   Expect<Equal<ModuleConstructor, typeof haha>>
 ]
 ```
-16.xxxx
+16.isNever
+```ts
+type IsNever<T> = [T] extends [never] ? true : false;
+```
+
+17. isUnion
+
+```ts
+type IsUnion<T, B = T> = T extends B ? [B] extends [T] ? false : true : never;
+```
