@@ -119,5 +119,5 @@ type IsNever<T> = [T] extends [never] ? true : false;
 17. isUnion
 
 ```ts
-type IsUnion<T, B = T> = T extends B ? [B] extends [T] ? false : true : never;
+type IsUnion<T, B = T> = T extends B ? [B] extends [T] ? false : true : never;   // [T] 指定不分发
 ```
