@@ -29,14 +29,34 @@ function trigger(target, value) {
 }
 
 
-let product = {price: 1, quantity: 3};
+function reactive(target) {
+  
+  const handler = {
+    get(target, value, receiver) {
+      track(target, value);
+      return Reflect.get(target, value, receiver);
+      
+    },
+    set(target, value, receiver) {
+      let oldvalue = target[value];
+      let reflect = Reflect.set(target, value, receiver);
+      if (value != oldvalue && reflect) {
+        trigger(target, value);
+      }
+    }
+  }
+  
+  
+  
+  return new Proxy(target, handler);
+}
+
+let product = reactive({price: 1, quantity: 3});
 let total = 0;
 
 let effect = () => {
   total = product.price * product.quantity;
 }
-
-track(product, 'quantity');
 
 effect();
 
@@ -44,6 +64,5 @@ console.log(total);
 
 product.quantity = 5;
 
-trigger(product, 'quantity');
 
 console.log(total);
