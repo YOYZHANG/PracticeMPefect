@@ -1,17 +1,19 @@
 // ref
 let targetMap = new WeakMap();
+let affect = null;
 function track(target, value) {
-  let depsMap = targetMap.get(target);
-  if (!depsMap) {
-    targetMap.set(target, depsMap = new Map());
+  if (affect) {
+    let depsMap = targetMap.get(target);
+    if (!depsMap) {
+      targetMap.set(target, depsMap = new Map());
+    }
+
+    let deps = depsMap.get(value);
+    if (!deps) {
+      depsMap.set(value, (deps = new Set()));
+    }
+    deps.add(effect);
   }
-  
-  let deps = depsMap.get(value);
-  if (!deps) {
-    depsMap.set(value, (deps = new Set()));
-  }
-  
-  deps.add(effect);
 }
 
 function trigger(target, value) {
@@ -26,6 +28,12 @@ function trigger(target, value) {
          effect();
        })
   }
+}
+
+function effect(eff) {
+  affect = eff;
+  eff();
+  affect = null;
 }
 
 
@@ -54,11 +62,7 @@ function reactive(target) {
 let product = reactive({price: 1, quantity: 3});
 let total = 0;
 
-let effect = () => {
-  total = product.price * product.quantity;
-}
-
-effect();
+effect(() => {total = product.price * product.quantity});
 
 console.log(total);
 
