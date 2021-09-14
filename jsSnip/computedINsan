@@ -1,0 +1,31 @@
+// computed
+// watch
+// 实现
+
+// 假设已经有了个data函数
+
+function watch(dataName, listener) {
+    let value = getValue(dataName);
+    this.data.listen((newVal) => {
+        if (newVal != value) {
+            let oldValue = value;
+            let value = newVal;
+            listener.call(this, newValue, oldValue);
+        }
+    });
+}
+
+function calc(val) {
+  var isWatched = false;
+  var data = {
+    get: function(expr) {
+        if (!isWatched) {
+          this.watch(expr, () => {
+              this.calc(val);
+          })
+        }
+    }
+  };
+  var result = callback({data});
+  this.data.set(val, result);
+}
