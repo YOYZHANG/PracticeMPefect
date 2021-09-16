@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div id="version"></div>
+    <div id="hash-buttons"></div>
+</body>
+</html>
+
+<script>
+    const List = ['san@3.10.10', 'san@3.9.2'];
+    const DEFULT_HASH_INDEX = 0;
+    var Hasher = (function () {
+        function Hasher(hashList, onChange) {
+            this._hashList = hashList;
+            window.addEventListener('hashchange', function() {
+                onChange();
+            });
+        }
+
+        var changeHash = Hasher.prototype.changeHash = function(index) {
+            console.log(this, '_hashList')
+            location.hash = '#' + encodeURIComponent(this._hashList[index]);
+        }
+        Hasher.prototype.getCurrentHash = function() {
+            return decodeURIComponent((location.hash || '').replace(/^#/, ''));
+        }
+        Hasher.prototype.renderHashButton = function(container) {
+            let wrapContainer = document.getElementById(container);
+            for (let [index, hash] of this._hashList.entries()) {
+                let button = document.createElement('button');
+                button.id = hash;
+                button.innerHTML = hash;
+                button.addEventListener('click', (e) => {
+                    changeHash.call(this, index);
+                });
+
+                wrapContainer.appendChild(button);
+            }
+        }
+
+
+        return Hasher;
+
+    })();
+
+    var hash = new Hasher(List, () => {
+        location.reload();
+    });
+
+    let sanScript = hash.getCurrentHash();
+
+    if (!sanScript) {
+        hash.changeHash(DEFULT_HASH_INDEX);
+    }
+
+    document.write('<script src=https://unpkg.com/'+ sanScript +'/dist/san.dev.js\>\<\/script>');
+
+    hash.renderHashButton('hash-buttons');
+    document.getElementById('version').innerHTML = sanScript;
+</script>
