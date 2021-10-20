@@ -22,19 +22,60 @@ console.log(config.get('awesome'));
 class Configstore {
     constructor(id, defaults, options = {}) {
         if (defaults) {
-            
+            this.all = {
+                ...defaults,
+                ...this.all
+            };
         }
     }
 
-    get all() {}
-    set all(value) {}
-    get size() {}
-    get(key) {}
-    set(key, value) {}
-    has(key) {}
-    delete(key) {}
-    clear() {}
-    get path() {
+    get all() {
+        try {
+            return JSON.parse(fs.readFileSync(this._path, 'utf-8'));
+        } catch (error) {
+            if (error.code === 'ENOENT') {}
+
+            if (error.code === 'EACCES') {
+
+            }
+
+            if (error.name === 'SyntaxError') {
+
+            }
+
+            throw error;
+        }
+    }
+    set all(value) {
+        try {
+            fs.mkdirSync(path.dirname(this._path), mkdirOptions);
+            writeFileAtomic.sync(this._path, JSON.stringify(value, undefined, '\t'))
+        } catch (error) {
+
+        }
+    }
+    get size() {
+        return Object.keys(this.all || {}).length;
+    }
+    get(key) {
 
     }
+    set(key, value) {
+
+    }
+    has(key) {
+
+    }
+    delete(key) {
+
+    }
+    clear() {
+        this.all = {};
+    }
+    get path() {
+        return this._path;
+    }
 }
+
+// 可以关注的库：
+// dot-prop
