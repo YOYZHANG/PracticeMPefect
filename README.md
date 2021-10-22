@@ -6,5 +6,12 @@
 
 - 2021-10-19: [configstore](daliyTasks/configstore.js)
 
+- 2021-10-22: [单测覆盖率实现原理](daliyTasks/instrument.md)
+
+- 2021-10-23: [snabbdom 插件能力](daliyTasks/vdom.js)
+
 # 常用工具
 [keyCode](https://www.dute.org/keycodes)
+
+# 前端学习网址
+[new React doc](https://beta.reactjs.org/learn)
