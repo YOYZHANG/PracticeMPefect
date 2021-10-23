@@ -10,6 +10,8 @@
 
 - 2021-10-23: [snabbdom 插件能力](daliyTasks/vdom.js)
 
+- 2021-10-23: [vuex 4 源码分析](daliyTasks/vuex4.js)
+
 # 常用工具
 [keyCode](https://www.dute.org/keycodes)
 
