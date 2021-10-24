@@ -58,5 +58,64 @@ function createAppContext() {
 
 // inject 的实现
 function inject() {
+    const instance = currentInstance
     
+    if (instance) {
+        const provides = instance.parent == null
+            ? instance.vnode.appContext && instance.vnode.appContext.privides
+            : instance.parent.provides;
+        
+        if (provides && key in provides) {
+            // TS doesn't allow symbol as index type
+            return provides[key];
+        }
+    }
 }
+
+// vue.provide 实现
+// provide 函数作用
+// 1. 给当前组件实例上 provides 对象属性，添加键值对
+// 2. 还有一个作用是当当前组件和父级组件 provides 相同时，在当前组件实例中的provides对象和父级，则建立链接
+
+function provide(key, value) {
+    if(!currentInstance) {
+        warn();
+    }
+    else {
+        let provides = currentInstance.provides;
+        const parentProvides = curentInstance.parent && currentInstance.parent.provides;
+
+        if (parentProvides === provides) {
+            provides = currentInstance.provides = Object.create(parentProvides);
+        }
+    }
+
+    provides[key] = value;
+}
+
+// createComponentInstance 创建组件实例
+const emptyAppContext = createAppContext();
+let uid$1 = 0;
+function createComponentInstance(vnode, parent, suspense) {
+    const type = vnode.type;
+    const appContext = (parent ? parent.appContext : vnode.appContext) || emptyAppContext;
+    const instance = {
+        uid: uid$1++,
+        vnode,
+        type,
+        parent,
+        appContext,
+        root: null,
+        next: null,
+        subTree: null,
+        // ...
+        provides: parent ? parent.provides : Object.create(appContext.provides),
+        // ...
+    }
+    instance.root = parent ? parent.root : instance;
+    // ...
+    return instance;
+}
+
+
+
