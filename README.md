@@ -16,6 +16,8 @@
 
 - 2021-10-25: [native-api Button 组件库分析](daliyTasks/button.js)
 
+- 2021-10-29: [typescript 专项复习]
+
 # 常用工具
 [keyCode](https://www.dute.org/keycodes)
 
