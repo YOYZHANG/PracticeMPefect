@@ -18,6 +18,9 @@
 
 - 2021-10-29: typescript 专项复习
 
+- 2021-11-02: [Hermes](daliyTasks/Hermes.md)
+
+
 # 常用工具
 [keyCode](https://www.dute.org/keycodes)
 
