@@ -27,3 +27,7 @@
 
 # 前端学习网址
 [new React doc](https://beta.reactjs.org/learn)
+
+# 大佬博文网址
+[milo](https://www.cnblogs.com/miloyip/archive/2010/07/07/languages_brawl_GI.html)
+[doodlewind](https://zhuanlan.zhihu.com/p/102692865)
