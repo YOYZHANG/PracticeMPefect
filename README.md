@@ -24,6 +24,8 @@
 
 - 2021-11-06: [v8base](daliyTasks/v8base.md)
 
+- 2021-11-09: [v8base](daliyTasks/embedV8.md)
+
 # 常用工具
 [keyCode](https://www.dute.org/keycodes)
 
