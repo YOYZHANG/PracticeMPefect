@@ -24,6 +24,8 @@
 
 - 2021-11-06: [v8base](daliyTasks/v8base.md)
 
+- 2021-11-15: [quickjs api](daliyTasks/quickjs.md)
+
 # 常用工具
 [keyCode](https://www.dute.org/keycodes)
 

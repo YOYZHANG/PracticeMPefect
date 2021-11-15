@@ -258,3 +258,27 @@ https://html.spec.whatwg.org/multipage/webappapis.html#task-queue
 
 
 
+quickjs
+JSRunTime:
+JSRuntime表示与对象堆相对应的JavaScript运行时。几个运行时可以同时存在，但它们无法交换对象。在给定的运行时内，不支持多线程。
+
+jscontext表示javascript上下文（或realm）。每个jscontext都有自己的全局对象和系统对象。每个jsruntime可以存在几个jscontexts，它们可以共享对象，类似于在Web浏览器中共享JavaScript对象的相同原点的帧。
+
+JSValue:
+jsvalue表示可以是原始类型或对象的JavaScript值。使用引用计数，因此重要的是要明确重复（js_dupvalue（），递增参考计数）或free（js_freevalue（），减少引用计数）JSvalues。
+
+c function:
+C功能可以使用js_newcfunction（）创建。js_setPropertyFunctionList（）是一个快捷方式，可轻松地添加功能，设置和将属性加入给定对象。
+
+Unlike other embedded Javascript engines, there is no implicit stack, so C functions get their parameters as normal C parameters. As a general rule, C functions take constant JSValues as parameters (so they don’t need to free them) and return a newly allocated (=live) JSValue.
+
+异常：
+例外：大多数C函数可以返回JavaScript异常。必须由C代码明确测试和处理。特定的jsvalue js_exception表示发生异常。实际的异常对象存储在jscontext中，可以使用js_getexception（）检索。
+
+Script evaluation
+如果脚本或模块编译为具有QJSC的字节码，则可以通过调用js_std_eval_binary（）来评估它。优点是不需要编译，因此它更快且更小，因为如果不需要eval，则可以从可执行文件中删除编译器。
+
+注意：字节码格式链接到给定的QuickJS版本。此外，在执行之前没有完成安全检查。因此，字节码不应从不受信任的来源加载。这就是为什么没有选项将字节码输出到QJSC中的二进制文件
+
+JS Classes
+C不透明数据可以附加到JavaScript对象。
