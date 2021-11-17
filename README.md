@@ -26,6 +26,8 @@
 
 - 2021-11-15: [quickjs api](daliyTasks/quickjs.md)
 
+- 2021-11-17: [quickjs in kraken](daliyTasks/kraken.md)
+
 # 常用工具
 [keyCode](https://www.dute.org/keycodes)
 
