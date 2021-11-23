@@ -282,3 +282,38 @@ Script evaluation
 
 JS Classes
 C不透明数据可以附加到JavaScript对象。
+
+
+https://ming1016.github.io/2021/02/21/deeply-analyse-quickjs/#QuickJS-%E6%9E%B6%E6%9E%84
+
+JSRuntime 是 js 运行时，可以看做是 js 虚拟机环境，多个 JSRuntime 之间是隔离的，他们之间不能相互调用和通信。JSContext 是虚机里的上下文环境，一个 JSRuntime 里可以有多个 JSContext，每个上下文有自己的全局和系统对象，不同 JSContext 之间可以相互访问和共享对象。JS_Eval 和 JS_Parse 会把 js 文件编译为字节码。JS_Call 是用来解释执行字节码的。JS_OPCode 是用来标识执行指令对应的操作符。JSClass 包含标准的 js 的对象，是运行时创建的类，对象类型使用 JSClassID 来标记，使用 JS_NewClassID 和 JS_NewClass 函数注册，使用 JS_NewObjectClass 来创建对象。JSOpCode 是字节码的结构体，通过 quickjs-opcode.h 里的字节码的定义可以看到，QuickJS 对于每个字节码的大小都会精确控制，目的是不浪费内存使用，比如8位以下用不到1个字节和其他信息一起放在那1个字节里，8位用2个字节，整数在第2个字节里，16位用后2个字节。Unicode 是 QuickJS 自己做的库 libunicode.c，libunicode 有 Unicode 规范化和脚本通用类别查询，包含所有 Unicode 二进制属性，libunicode 还可以单独出来用在其他工程中。中间层还包含支持科学计算 BigInt 和 BigFloat 的 libbf 库，正则表达式引擎 libregexp。扩展模块 Std Module 和 OS Module，提供标准能力和系统能力，比如文件操作和时间操作等。
+
+底层是基础，JS_RunGC 使用引用计数来管理对象的释放。JS_Exception 是会把 JSValue 返回的异常对象存在 JSContext 里，通过 JS_GetException 函数取出异常对象。内存管理控制 js 运行时全局内存分配上限使用的是 JS_SetMemoryLimit 函数，自定义分配内存用的是 JS_NewRuntime2 函数，堆栈的大小使用的是 JS_SetMaxStackSize 函数来设置。
+
+```c++
+JSRuntime *rt = JS_NewRuntime();
+JSContext *ctx = JS_NewContext(rt);
+js_std_add_helpers(ctx, 0, NULL);
+
+const char *scripts = "console.log('hello quickjs')";
+JS_Eval(ctx, scripts, strlen(scripts), "main", 0);
+```
+
+新建 Runtime
+JS_NewRuntime 函数会新建一个 JSRuntime rt，Runtime的结构体 JSRuntime
+包含了内存分配函数和状态，原子大小 atom_size 和原子结构数组指针 atom_array, 记录类的数组 class_array,用于 GC 的一些链表 head，栈头 stack_top，栈空间大小（bytes）stack_size，当前栈帧 current_stack_frame，避免重复出现内存超出错误的 in_out_of_memory 布尔值，中断处理 interrupt_handler，module 读取函数 module_loader_func，用于分配、释放和克隆 SharedArrayBuffers 的 sab_funcs，Shape 的哈希表 shape_hash，创建一般函数对象外，还有种避开繁琐字节码处理更快创建函数对象的方法，也就是 Shape，创建 Shape 的调用链是 JS_NewCFunctionData -> JS_NewObjectProtoClass -> js_new_shape。创建 shape 的函数是 js_new_shape2，创建对象调用的函数是 JS_NewObjectFromShape。
+
+创建的对象是 JSObject 结构体，JSObject 是 js 的对象，JSObject 的字段会使用 union,结构体和 union 的区别是结构体的字段之间会有自己的内存，而 union 里的字段会使用相同的内存，union 内存就是里面占用最多内存字段的内存。
+
+union 使用的内存覆盖方式，只能有一个字段的值，每次有新字段赋值都会覆盖先前的字段值。JSObject 里第一个 union 是用到引用计数的，__gc_ref_count 用来计数，__gc_mark 用来描述当前 GC 的信息，值为 JSGCObjectTypeEnum 枚举。extensible 是表示对象能否扩展.
+
+is_exotic 记录对象是否是 exotic 对象，es 规范里定义只要不是普通的对象都是 exotic 对象，比如数组创建的实例就是 exotic 对象。fast_array 为 true 用于JS_CLASS_ARRAY、JS_CLASS_ARGUMENTS和类型化数组这样只会用到 get 和 put 基本操作的数组。如果对象是构造函数 is_constructor 为 true。当 is_uncatchable_error 字段为 true 时表示对象的错误不可捕获。class_id 对应的是 JS_CLASS 打头的枚举值，这些枚举值定义了类的类型。原型和属性的名字还有 flag 记在 shape 字段，存属性的数组记录在 prop 字段。
+
+JS_ClASS 开头定义的类对象使用的是 union，因为一个实例对象只可能属于一种类型。其中 JS_CLASS_BOUND_FUNCTION 类型对应的结构体是 JSBoundFunction，JS_CLASS_BOUND_FUNCTION 类型是使用 bind() 方法创建的函数，创建的函数的 this 被指定是 bind() 的第一个参数，bind 的其他参数会给新创建的函数使用。JS_CLASS_C_FUNCTION_DATA 这种类型的对象是 QuickJS 的扩展函数，对应结构体是 JSCFunctionDataRecord。JS_CLASS_FOR_IN_ITERATOR 类型对象是 for…in 创建的迭代器函数，对应的结构体是 JSForInIterator。
+
+JS_CLASS_ARRAY_BUFFER 表示当前对象是 ArrayBuffer 对象，ArrayBuffer 是用来访问二进制数据，比如加快数组操作，还有媒体和网络 Socket 的二进制数据，ArrayBuffer 对应 swift 里的 byte array，swift 的字符串类型是基于 Unicode scalar 值构建的，一个 Unicode scalar 是一个21位数字，用来代表一个字符或修饰符，比如 U+1F600 对应的修饰符是 😀，U+004D 对应的字符是 M。因此 Unicode scalar 是可以由 byte array 来构建的。byte array 和字符之间也可以相互转换，如下面的 swift 代码：
+
+typed_array 也就是类型化数组，其结构体是 JSTypedArray。类型化数组把实现分为 ArrayBuffer 对象缓冲，使用视图读写缓冲对象中的内容，视图会将数据转换成有类型的数组。
+
+map_state 字段的结构体是 JSMapState，用来存放以下对象类型的状态：
+
