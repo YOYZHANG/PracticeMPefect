@@ -1,0 +1,62 @@
+function SubClass() {
+    this.attr1 = 1;
+    this.attr = 333;
+    console.log('sub');
+    BaseClass.apply(this, arguments);
+}
+
+function inherit(BaseClass, SubClass) {
+    function Fn() {};
+    Fn.prototype = BaseClass.prototype;
+
+    SubClass.prototype = new Fn();
+    SubClass.prototype.constructor = SubClass;
+
+}
+
+
+
+
+function BaseClass() {
+    this.attr = 888;
+    console.log('base');
+    AncestorClass.apply(this, arguments);
+}
+
+
+
+function AncestorClass() {
+    this.attr = 666;
+    console.log('ancestor');
+}
+
+
+
+
+inherit(AncestorClass, BaseClass);
+inherit(BaseClass, SubClass);
+
+
+SubClass.prototype.fnSub = function() {
+   console.log('fnSub');
+};
+
+BaseClass.prototype.fnBase = function (){
+   console.log('fnBase');
+};
+
+AncestorClass.prototype.fnAncestorClass = function() {
+    console.log('fnAncestorClass');
+};
+
+
+let subclass = new BaseClass();
+
+console.log(subclass)
+
+
+// js 继承为什么要引入 F()
+// : 为了不在 new 的时候执行 BaseClass 的构造函数
+
+// js 的继承 和 其他语言的继承有什么区别
+// （1）其他语言一定会执行 super
