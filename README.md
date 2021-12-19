@@ -30,6 +30,9 @@
 
 - 2021-11-19: [jni](daliyTasks/jni.md)
 
+- 2021-11-27: [vsync 信号量](daliyTasks/vsync.md)
+
+- 2021-12-19: [wsam](daliyTasks/wsam.md)
 # 常用工具
 [keyCode](https://www.dute.org/keycodes)
 
